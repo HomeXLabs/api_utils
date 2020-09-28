@@ -1,12 +1,34 @@
 import 'dart:typed_data';
+import 'dart:convert';
 
-import 'package:api_utils/src/status_code.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
-import 'dart:convert';
+import 'package:api_utils/src/api_logger.dart';
+import 'package:api_utils/src/status_code.dart';
 import 'package:api_utils/src/api_response.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic>);
+
+void _onException(
+  String method,
+  String url,
+  int statusCode, [
+  Exception e,
+  StackTrace stack,
+]) {
+  var message = 'Api Error: $statusCode $method: $url Error: ${e.toString()}';
+  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, e, stack)});
+}
+
+void _onError(
+  String method,
+  String url,
+  int statusCode,
+  String error,
+) {
+  var message = 'Api Error: $statusCode $method: $url Error: $error';
+  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, null, null)});
+}
 
 Future<ApiResponse<T>> get<T>(
     {@required String url,
@@ -15,9 +37,9 @@ Future<ApiResponse<T>> get<T>(
     Map<String, String> headers}) async {
   try {
     var response = await http.get(url, headers: headers);
-    return _handleResult(response, fromJson, useFromJsonOnFailure);
+    return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
-    // todo logger
+    _onException('GET', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -26,9 +48,9 @@ Future<ApiResponse<Uint8List>> getByteArray(
     {@required String url, Map<String, String> headers}) async {
   try {
     var response = await http.get(url, headers: headers);
-    return _handleByteArrayResult(response);
+    return _handleByteArrayResult('GET', url, response);
   } catch (e, stack) {
-    // todo logger
+    _onException('GET', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -39,9 +61,9 @@ Future<ApiResponse<List<T>>> getList<T>(
     Map<String, String> headers}) async {
   try {
     var response = await http.get(url, headers: headers);
-    return _handleListResult(response, fromJson);
+    return _handleListResult('GET', url, response, fromJson);
   } catch (e, stack) {
-    // todo logger
+    _onException('GET', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -55,9 +77,9 @@ Future<ApiResponse<T>> post<T>(
   try {
     var response =
         await http.post(url, headers: headers, body: jsonEncode(body));
-    return _handleResult(response, fromJson, useFromJsonOnFailure);
+    return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
-    // todo logger
+    _onException('POST', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -70,9 +92,9 @@ Future<ApiResponse<T>> postAsString<T>(
     Map<String, String> headers}) async {
   try {
     var response = await http.post(url, headers: headers, body: body);
-    return _handleResult(response, fromJson, useFromJsonOnFailure);
+    return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
-    // todo logger
+    _onException('POST', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -85,9 +107,9 @@ Future<ApiResponse<List<T>>> postAndGetList<T>(
   try {
     var response =
         await http.post(url, headers: headers, body: jsonEncode(body));
-    return _handleListResult(response, fromJson);
+    return _handleListResult('POST', url, response, fromJson);
   } catch (e, stack) {
-    // todo logger
+    _onException('POST', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -101,9 +123,9 @@ Future<ApiResponse<T>> put<T>(
   try {
     var response =
         await http.put(url, headers: headers, body: jsonEncode(body));
-    return _handleResult(response, fromJson, useFromJsonOnFailure);
+    return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
-    // todo logger
+    _onException('PUT', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -117,9 +139,9 @@ Future<ApiResponse<T>> putList<T>(
   try {
     var response =
         await http.put(url, headers: headers, body: jsonEncode(body));
-    return _handleResult(response, fromJson, useFromJsonOnFailure);
+    return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
-    // todo logger
+    _onException('PUT', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -128,9 +150,9 @@ Future<ApiResponse<T>> delete<T>(
     {@required String url, Map<String, String> headers}) async {
   try {
     var response = await http.delete(url, headers: headers);
-    return _handleResult(response, null, false);
+    return _handleResult('DELETE', url, response, null, false);
   } catch (e, stack) {
-    // todo logger
+    _onException('DELETE', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
@@ -144,14 +166,17 @@ Future<ApiResponse<T>> patch<T>(
   try {
     var response =
         await http.patch(url, headers: headers, body: jsonEncode(body));
-    return _handleResult(response, fromJson, useFromJsonOnFailure);
+    return _handleResult(
+        'PATCH', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
-    // todo logger
+    _onException('PATCH', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
 }
 
 ApiResponse<T> _handleResult<T>(
+  String method,
+  String url,
   http.Response response,
   T Function(Map<String, dynamic>) fromJson,
   bool useFromJsonOnFailure,
@@ -166,30 +191,38 @@ ApiResponse<T> _handleResult<T>(
     if (fromJson != null && useFromJsonOnFailure) {
       data = fromJson(jsonDecode(response.body) as Map<String, dynamic>);
     }
-    // todo logger
+    _onError(method, url, response.statusCode, response.body);
     return ApiResponse(response.statusCode, data: data, error: response.body);
   }
 }
 
-ApiResponse<Uint8List> _handleByteArrayResult(http.Response response) {
+ApiResponse<Uint8List> _handleByteArrayResult(
+  String method,
+  String url,
+  http.Response response,
+) {
   Uint8List data;
   if (isSuccessStatusCode(response.statusCode)) {
     data = response.bodyBytes;
     return ApiResponse<Uint8List>(response.statusCode, data: data);
   } else {
-    // todo logger
+    _onError(method, url, response.statusCode, response.body);
     return ApiResponse(response.statusCode, data: data, error: response.body);
   }
 }
 
 ApiResponse<List<T>> _handleListResult<T>(
-    http.Response response, T Function(Map<String, dynamic>) fromJson) {
+  String method,
+  String url,
+  http.Response response,
+  T Function(Map<String, dynamic>) fromJson,
+) {
   if (isSuccessStatusCode(response.statusCode)) {
     var list = json.decode(response.body) as Iterable;
     var data = list.map((x) => fromJson(x as Map<String, dynamic>)).toList();
     return ApiResponse<List<T>>(response.statusCode, data: data);
   } else {
-    // todo logger
+    _onError(method, url, response.statusCode, response.body);
     return ApiResponse(response.statusCode, error: response.body);
   }
 }
