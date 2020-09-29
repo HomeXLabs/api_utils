@@ -7,6 +7,14 @@ import 'package:api_utils/src/api_logger.dart';
 import 'package:api_utils/src/status_code.dart';
 import 'package:api_utils/src/api_response.dart';
 
+@visibleForTesting
+void setHttpClientForTesting(http.Client client) {
+  assert(client != null);
+  _client = client;
+}
+
+http.Client _client = http.Client();
+
 typedef FromJson<T> = T Function(Map<String, dynamic>);
 
 /// Make a GET request with a json object response
@@ -16,7 +24,7 @@ Future<ApiResponse<T>> get<T>(
     bool useFromJsonOnFailure = false,
     Map<String, String> headers}) async {
   try {
-    var response = await http.get(url, headers: headers);
+    var response = await _client.get(url, headers: headers);
     return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
@@ -28,7 +36,7 @@ Future<ApiResponse<T>> get<T>(
 Future<ApiResponse<Uint8List>> getByteArray(
     {@required String url, Map<String, String> headers}) async {
   try {
-    var response = await http.get(url, headers: headers);
+    var response = await _client.get(url, headers: headers);
     return _handleByteArrayResult('GET', url, response);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
@@ -42,7 +50,7 @@ Future<ApiResponse<List<T>>> getList<T>(
     @required FromJson<T> fromJson,
     Map<String, String> headers}) async {
   try {
-    var response = await http.get(url, headers: headers);
+    var response = await _client.get(url, headers: headers);
     return _handleListResult('GET', url, response, fromJson);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
@@ -60,7 +68,7 @@ Future<ApiResponse<T>> post<T>(
     Map<String, String> headers}) async {
   try {
     var response =
-        await http.post(url, headers: headers, body: jsonEncode(body));
+        await _client.post(url, headers: headers, body: jsonEncode(body));
     return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('POST', url, -1, e, stack);
@@ -77,7 +85,7 @@ Future<ApiResponse<T>> postAsString<T>(
     bool useFromJsonOnFailure = false,
     Map<String, String> headers}) async {
   try {
-    var response = await http.post(url, headers: headers, body: body);
+    var response = await _client.post(url, headers: headers, body: body);
     return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('POST', url, -1, e, stack);
@@ -94,7 +102,7 @@ Future<ApiResponse<List<T>>> postAndGetList<T>(
     Map<String, String> headers}) async {
   try {
     var response =
-        await http.post(url, headers: headers, body: jsonEncode(body));
+        await _client.post(url, headers: headers, body: jsonEncode(body));
     return _handleListResult('POST', url, response, fromJson);
   } catch (e, stack) {
     _onException('POST', url, -1, e, stack);
@@ -112,7 +120,7 @@ Future<ApiResponse<T>> put<T>(
     Map<String, String> headers}) async {
   try {
     var response =
-        await http.put(url, headers: headers, body: jsonEncode(body));
+        await _client.put(url, headers: headers, body: jsonEncode(body));
     return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('PUT', url, -1, e, stack);
@@ -130,7 +138,7 @@ Future<ApiResponse<T>> putList<T>(
     Map<String, String> headers}) async {
   try {
     var response =
-        await http.put(url, headers: headers, body: jsonEncode(body));
+        await _client.put(url, headers: headers, body: jsonEncode(body));
     return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('PUT', url, -1, e, stack);
@@ -142,7 +150,7 @@ Future<ApiResponse<T>> putList<T>(
 Future<ApiResponse<T>> delete<T>(
     {@required String url, Map<String, String> headers}) async {
   try {
-    var response = await http.delete(url, headers: headers);
+    var response = await _client.delete(url, headers: headers);
     return _handleResult('DELETE', url, response, null, false);
   } catch (e, stack) {
     _onException('DELETE', url, -1, e, stack);
@@ -160,7 +168,7 @@ Future<ApiResponse<T>> patch<T>(
     Map<String, String> headers}) async {
   try {
     var response =
-        await http.patch(url, headers: headers, body: jsonEncode(body));
+        await _client.patch(url, headers: headers, body: jsonEncode(body));
     return _handleResult(
         'PATCH', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {

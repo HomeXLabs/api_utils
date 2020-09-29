@@ -1,8 +1,36 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:api_utils/api_utils.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 void main() {
+  setUpAll(() {
+    setHttpClientForTesting(MockClient((request) async {
+      if (request.url.toString() ==
+              'https://jsonplaceholder.typicode.com/posts' &&
+          request.method == 'GET') {
+        return http.Response(
+            jsonEncode([
+              Post(title: 'title', body: 'body'),
+              Post(title: 'title', body: 'body'),
+            ]),
+            200);
+      } else if (request.url.toString() ==
+              'https://jsonplaceholder.typicode.com/posts' &&
+          request.method == 'POST') {
+        return http.Response('', 201);
+      } else if (request.url.toString() ==
+          'https://jsonplaceholder.typicode.com/posts-bad-url') {
+        return http.Response('', 404);
+      } else {
+        return null;
+      }
+    }));
+  });
+
   test('getList', () async {
     var response = await getList(
       url: 'https://jsonplaceholder.typicode.com/posts',
