@@ -1,5 +1,6 @@
 # Api Utils for Dart & Flutter
 [![pub package](https://img.shields.io/pub/v/api_utils.svg?label=api_utils&color=blue)](https://pub.dev/packages/api_utils)
+
 *ain't no REST for the wicked*
 ## Intro
 A collection of helper functions and an `ApiResponse` class that make working with REST apis a bit easier.
