@@ -9,27 +9,6 @@ import 'package:api_utils/src/api_response.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic>);
 
-void _onException(
-  String method,
-  String url,
-  int statusCode, [
-  Exception e,
-  StackTrace stack,
-]) {
-  var message = 'Api Error: $statusCode $method: $url Error: ${e.toString()}';
-  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, e, stack)});
-}
-
-void _onError(
-  String method,
-  String url,
-  int statusCode,
-  String error,
-) {
-  var message = 'Api Error: $statusCode $method: $url Error: $error';
-  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, null, null)});
-}
-
 Future<ApiResponse<T>> get<T>(
     {@required String url,
     @required FromJson<T> fromJson,
@@ -225,4 +204,25 @@ ApiResponse<List<T>> _handleListResult<T>(
     _onError(method, url, response.statusCode, response.body);
     return ApiResponse(response.statusCode, error: response.body);
   }
+}
+
+void _onException(
+  String method,
+  String url,
+  int statusCode, [
+  Exception e,
+  StackTrace stack,
+]) {
+  var message = 'Api Error: $statusCode $method $url Error: ${e.toString()}';
+  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, e, stack)});
+}
+
+void _onError(
+  String method,
+  String url,
+  int statusCode,
+  String error,
+) {
+  var message = 'Api Error: $statusCode $method $url Error: $error';
+  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, null, null)});
 }

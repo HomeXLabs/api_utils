@@ -1,7 +1,6 @@
 library api_utils;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/api_logger.dart';
+export 'src/api_response.dart';
+export 'src/request.dart';
+export 'src/status_code.dart';
