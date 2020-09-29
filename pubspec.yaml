@@ -1,15 +1,14 @@
 name: api_utils
-description: A new Flutter package project.
+description: Simple api utilities to make working with REST easier
 version: 0.0.1
-author:
-homepage:
+homepage: https://github.com/HomeXLabs/api_utils
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
   flutter: ">=1.17.0 <2.0.0"
 
 dependencies:
-  http: ^0.12.2
+  http: '>=0.12.0 <1.0.0'
   flutter:
     sdk: flutter
 
