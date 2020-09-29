@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:api_utils/api_utils.dart';
 
 void main() {
-  test('GetList Test', () async {
+  test('getList', () async {
     var response = await getList(
       url: 'https://jsonplaceholder.typicode.com/posts',
       fromJson: (x) => Post.fromJson(x),
@@ -14,7 +14,7 @@ void main() {
     expect(response.data != null, true);
   });
 
-  test('Api Logger Test', () async {
+  test('ApiLogger logs', () async {
     String errorMsg;
     ApiLogger.onErrorMiddleware.add((message, e, stack) {
       errorMsg = message;
@@ -29,6 +29,17 @@ void main() {
     expect(response.isSuccess, false);
     expect(response.data == null, true);
     expect(errorMsg != null, true);
+  });
+
+  test('post', () async {
+    var newPost = Post(title: 'title', body: 'body');
+    var response = await post(
+      url: 'https://jsonplaceholder.typicode.com/posts',
+      body: newPost.toJson(),
+    );
+
+    expect(response.statusCode, 201);
+    expect(response.isSuccess, true);
   });
 }
 
