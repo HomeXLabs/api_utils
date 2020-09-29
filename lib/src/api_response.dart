@@ -1,5 +1,6 @@
 import 'package:api_utils/src/status_code.dart';
 
+/// Response from an api, with a typed [data] field
 class ApiResponse<T> {
   final int statusCode;
   final T data;

@@ -9,6 +9,7 @@ import 'package:api_utils/src/api_response.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic>);
 
+/// Make a GET request with a json object response
 Future<ApiResponse<T>> get<T>(
     {@required String url,
     @required FromJson<T> fromJson,
@@ -23,6 +24,7 @@ Future<ApiResponse<T>> get<T>(
   }
 }
 
+/// Make a GET request with a byte array response
 Future<ApiResponse<Uint8List>> getByteArray(
     {@required String url, Map<String, String> headers}) async {
   try {
@@ -34,6 +36,7 @@ Future<ApiResponse<Uint8List>> getByteArray(
   }
 }
 
+/// Make a GET request with an json list response
 Future<ApiResponse<List<T>>> getList<T>(
     {@required String url,
     @required FromJson<T> fromJson,
@@ -47,6 +50,8 @@ Future<ApiResponse<List<T>>> getList<T>(
   }
 }
 
+/// Make a POST request sending a json object, with an optional json object
+/// response
 Future<ApiResponse<T>> post<T>(
     {@required String url,
     @required Map<String, dynamic> body,
@@ -63,6 +68,8 @@ Future<ApiResponse<T>> post<T>(
   }
 }
 
+/// Make a POST request sending a raw string, with an optional json object
+/// response
 Future<ApiResponse<T>> postAsString<T>(
     {@required String url,
     @required String body,
@@ -78,6 +85,8 @@ Future<ApiResponse<T>> postAsString<T>(
   }
 }
 
+/// Make a POST request sending a json object, with an optional json list
+/// response
 Future<ApiResponse<List<T>>> postAndGetList<T>(
     {@required String url,
     @required Map<String, dynamic> body,
@@ -93,6 +102,8 @@ Future<ApiResponse<List<T>>> postAndGetList<T>(
   }
 }
 
+/// Make a PUT request sending a json object, with an optional json object
+/// response
 Future<ApiResponse<T>> put<T>(
     {@required String url,
     @required Map<String, dynamic> body,
@@ -109,6 +120,8 @@ Future<ApiResponse<T>> put<T>(
   }
 }
 
+/// Make a PUT request sending a json list, with an optional json object
+/// response
 Future<ApiResponse<T>> putList<T>(
     {@required String url,
     @required List body,
@@ -125,6 +138,7 @@ Future<ApiResponse<T>> putList<T>(
   }
 }
 
+/// Make a DELETE request
 Future<ApiResponse<T>> delete<T>(
     {@required String url, Map<String, String> headers}) async {
   try {
@@ -136,6 +150,8 @@ Future<ApiResponse<T>> delete<T>(
   }
 }
 
+/// Make a PATCH request sending a json object, with an optional json object
+/// response
 Future<ApiResponse<T>> patch<T>(
     {@required String url,
     @required Map<String, dynamic> body,
