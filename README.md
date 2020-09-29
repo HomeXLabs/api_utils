@@ -7,7 +7,7 @@ A collection of helper functions and an `ApiResponse` class that make working wi
 ## Usage
 Here is an example of making a `GET` to an endpoint that returns a list. 
 
-All you need is a model with a `fromJson` contructor. This ensures you app only interacts with strongly typed models, not raw JSON lists and maps.
+All you need is a model with a `fromJson` contructor. This ensures you app only interacts with strongly typed models, not raw JSON lists and maps. [Json_serializable](https://pub.dev/packages/json_serializable) is a commonly used dart package that provides this functionality.
 ```dart
 var response = await getList(
     url: 'https://jsonplaceholder.typicode.com/posts',
