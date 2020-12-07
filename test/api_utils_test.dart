@@ -11,7 +11,7 @@ void main() {
   setUpAll(() {
     setHttpClientForTesting(MockClient((request) async {
       if (request.url.toString() ==
-          'https://jsonplaceholder.typicode.com/posts' &&
+              'https://jsonplaceholder.typicode.com/posts' &&
           request.method == 'GET') {
         return http.Response(
             jsonEncode([
@@ -20,7 +20,7 @@ void main() {
             ]),
             200);
       } else if (request.url.toString() ==
-          'https://jsonplaceholder.typicode.com/posts' &&
+              'https://jsonplaceholder.typicode.com/posts' &&
           request.method == 'POST') {
         return http.Response('', 201);
       } else if (request.url.toString() ==
@@ -34,10 +34,9 @@ void main() {
 
   test('getList', () async {
     var response = await getList(
-      url: 'https://jsonplaceholder.typicode.com/posts',
-      fromJson: (x) => Post.fromJson(x),
-      headers: {}
-    );
+        url: 'https://jsonplaceholder.typicode.com/posts',
+        fromJson: (x) => Post.fromJson(x),
+        headers: {}) as SuccessApiResponse;
 
     expect(response.statusCode, 200);
     expect(response.isSuccess, true);
@@ -51,10 +50,9 @@ void main() {
     });
 
     var response = await getList(
-      url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
-      fromJson: (x) => Post.fromJson(x),
-      headers: {}
-    );
+        url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
+        fromJson: (x) => Post.fromJson(x),
+        headers: {}) as SuccessApiResponse;
 
     expect(response.statusCode, 404);
     expect(response.isSuccess, false);
@@ -65,10 +63,9 @@ void main() {
   test('post', () async {
     var newPost = Post(title: 'title', body: 'body');
     var response = await post(
-      url: 'https://jsonplaceholder.typicode.com/posts',
-      body: newPost.toJson(),
-      headers: {}
-    );
+        url: 'https://jsonplaceholder.typicode.com/posts',
+        body: newPost.toJson(),
+        headers: {});
 
     expect(response.statusCode, 201);
     expect(response.isSuccess, true);

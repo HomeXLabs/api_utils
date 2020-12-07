@@ -5,8 +5,45 @@ class ApiResponse<T> {
   /// Http status code returned from the server
   final int statusCode;
 
+  /// Only populated when the request fails for some reason. This value will
+  /// contain an error response from the server or exception information if
+  /// the request failed before getting a response.
+  final String? error;
+
+  /// If the request was successful
+  bool get isSuccess => isSuccessStatusCode(statusCode);
+
+  ApiResponse._(this.statusCode, {this.error});
+
+  factory ApiResponse(statusCode, {T? data, error}) {
+    if (isSuccessStatusCode(statusCode) && data != null) {
+      return SuccessApiResponse<T>(statusCode: statusCode, data: data);
+    }
+    return ErrorApiResponse<T>(statusCode: statusCode, error: error);
+  }
+}
+
+class SuccessApiResponse<T> implements ApiResponse<T> {
+  /// Http status code returned from the server
+  final int statusCode;
+
   /// Response data transformed into a strongly typed object
-  final T? data;
+  final T data;
+
+  /// Only populated when the request fails for some reason. This value will
+  /// contain an error response from the server or exception information if
+  /// the request failed before getting a response.
+  final String? error = null;
+
+  /// If the request was successful
+  bool get isSuccess => isSuccessStatusCode(statusCode);
+
+  SuccessApiResponse({required this.statusCode, required this.data});
+}
+
+class ErrorApiResponse<T> implements ApiResponse<T> {
+  /// Http status code returned from the server
+  final int statusCode;
 
   /// Only populated when the request fails for some reason. This value will
   /// contain an error response from the server or exception information if
@@ -16,5 +53,5 @@ class ApiResponse<T> {
   /// If the request was successful
   bool get isSuccess => isSuccessStatusCode(statusCode);
 
-  ApiResponse(this.statusCode, {this.data, this.error});
+  ErrorApiResponse({required this.statusCode, required this.error});
 }
