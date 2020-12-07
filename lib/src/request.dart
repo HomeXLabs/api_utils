@@ -204,13 +204,13 @@ ApiResponse<Uint8List> _handleByteArrayResult(
   String url,
   http.Response response,
 ) {
-  Uint8List? data;
   if (isSuccessStatusCode(response.statusCode)) {
-    data = response.bodyBytes;
-    return ApiResponse<Uint8List>(response.statusCode, data: data);
+    return ApiResponse<Uint8List>(response.statusCode,
+        data: response.bodyBytes);
   } else {
     _onError(method, url, response.statusCode, response.body);
-    return ApiResponse(response.statusCode, data: data, error: response.body);
+    return ApiResponse(response.statusCode,
+        data: response.bodyBytes, error: response.body);
   }
 }
 
