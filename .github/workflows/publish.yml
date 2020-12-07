@@ -12,4 +12,3 @@ jobs:
       - uses: sakebook/actions-flutter-pub-publisher@v1.3.1
         with:
           credential: ${{ secrets.CREDENTIAL_JSON }}
-          dry_run: true
