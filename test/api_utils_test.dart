@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +35,7 @@ void main() {
   test('getList', () async {
     var response = await getList(
       url: 'https://jsonplaceholder.typicode.com/posts',
-      fromJson: (x) => Post.fromJson(x!),
+      fromJson: (x) => Post.fromJson(x),
       headers: {}
     );
 
@@ -44,14 +45,14 @@ void main() {
   });
 
   test('ApiLogger logs', () async {
-    String? errorMsg;
+    String errorMsg;
     ApiLogger.onErrorMiddleware.add((message, e, stack) {
       errorMsg = message;
     });
 
     var response = await getList(
       url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
-      fromJson: (x) => Post.fromJson(x!),
+      fromJson: (x) => Post.fromJson(x),
       headers: {}
     );
 
@@ -82,10 +83,10 @@ class Post {
     this.body,
   });
 
-  final int? userId;
-  final int? id;
-  final String? title;
-  final String? body;
+  final int userId;
+  final int id;
+  final String title;
+  final String body;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         userId: json["userId"],
