@@ -26,7 +26,7 @@ Future<ApiResponse<T>> get<T>(
   try {
     var response = await _client.get(url, headers: headers);
     return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('GET', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -38,7 +38,7 @@ Future<ApiResponse<Uint8List>> getByteArray(
   try {
     var response = await _client.get(url, headers: headers);
     return _handleByteArrayResult('GET', url, response);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('GET', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -52,7 +52,7 @@ Future<ApiResponse<List<T>>> getList<T>(
   try {
     var response = await _client.get(url, headers: headers);
     return _handleListResult('GET', url, response, fromJson);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('GET', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -70,7 +70,7 @@ Future<ApiResponse<T>> post<T>(
     var response =
         await _client.post(url, headers: headers, body: jsonEncode(body));
     return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('POST', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -87,7 +87,7 @@ Future<ApiResponse<T>> postAsString<T>(
   try {
     var response = await _client.post(url, headers: headers, body: body);
     return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('POST', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -104,7 +104,7 @@ Future<ApiResponse<List<T>>> postAndGetList<T>(
     var response =
         await _client.post(url, headers: headers, body: jsonEncode(body));
     return _handleListResult('POST', url, response, fromJson);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('POST', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -122,7 +122,7 @@ Future<ApiResponse<T>> put<T>(
     var response =
         await _client.put(url, headers: headers, body: jsonEncode(body));
     return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('PUT', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -140,7 +140,7 @@ Future<ApiResponse<T>> putList<T>(
     var response =
         await _client.put(url, headers: headers, body: jsonEncode(body));
     return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('PUT', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -152,7 +152,7 @@ Future<ApiResponse<T>> delete<T>(
   try {
     var response = await _client.delete(url, headers: headers);
     return _handleResult('DELETE', url, response, null, false);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('DELETE', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -171,7 +171,7 @@ Future<ApiResponse<T>> patch<T>(
         await _client.patch(url, headers: headers, body: jsonEncode(body));
     return _handleResult(
         'PATCH', url, response, fromJson, useFromJsonOnFailure);
-  } catch (e, stack) {
+  } on Exception catch (e, stack) {
     _onException('PATCH', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
@@ -234,7 +234,7 @@ void _onException(
   String method,
   String url,
   int statusCode, [
-  Object? e,
+  Exception? e,
   StackTrace? stack,
 ]) {
   var message = 'Api Error: $statusCode $method $url Error: ${e.toString()}';
