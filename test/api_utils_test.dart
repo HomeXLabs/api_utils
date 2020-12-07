@@ -52,11 +52,10 @@ void main() {
     var response = await getList(
         url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
         fromJson: (x) => Post.fromJson(x),
-        headers: {}) as SuccessApiResponse;
+        headers: {}) as FailureApiResponse;
 
     expect(response.statusCode, 404);
     expect(response.isSuccess, false);
-    expect(response.data == null, true);
     expect(errorMsg != null, true);
   });
 
