@@ -10,7 +10,7 @@ void main() {
   setUpAll(() {
     setHttpClientForTesting(MockClient((request) async {
       if (request.url.toString() ==
-              'https://jsonplaceholder.typicode.com/posts' &&
+          'https://jsonplaceholder.typicode.com/posts' &&
           request.method == 'GET') {
         return http.Response(
             jsonEncode([
@@ -19,7 +19,7 @@ void main() {
             ]),
             200);
       } else if (request.url.toString() ==
-              'https://jsonplaceholder.typicode.com/posts' &&
+          'https://jsonplaceholder.typicode.com/posts' &&
           request.method == 'POST') {
         return http.Response('', 201);
       } else if (request.url.toString() ==
@@ -34,7 +34,8 @@ void main() {
   test('getList', () async {
     var response = await getList(
       url: 'https://jsonplaceholder.typicode.com/posts',
-      fromJson: (x) => Post.fromJson(x),
+      fromJson: (x) => Post.fromJson(x!),
+      headers: {}
     );
 
     expect(response.statusCode, 200);
@@ -43,14 +44,15 @@ void main() {
   });
 
   test('ApiLogger logs', () async {
-    String errorMsg;
+    String? errorMsg;
     ApiLogger.onErrorMiddleware.add((message, e, stack) {
       errorMsg = message;
     });
 
     var response = await getList(
       url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
-      fromJson: (x) => Post.fromJson(x),
+      fromJson: (x) => Post.fromJson(x!),
+      headers: {}
     );
 
     expect(response.statusCode, 404);
@@ -64,6 +66,7 @@ void main() {
     var response = await post(
       url: 'https://jsonplaceholder.typicode.com/posts',
       body: newPost.toJson(),
+      headers: {}
     );
 
     expect(response.statusCode, 201);
@@ -79,10 +82,10 @@ class Post {
     this.body,
   });
 
-  final int userId;
-  final int id;
-  final String title;
-  final String body;
+  final int? userId;
+  final int? id;
+  final String? title;
+  final String? body;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         userId: json["userId"],

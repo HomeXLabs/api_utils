@@ -7,4 +7,4 @@ class ApiLogger {
   static List<OnError> onErrorMiddleware = [];
 }
 
-typedef OnError = Function(String message, Exception e, StackTrace stack);
+typedef OnError = Function(String message, Object? e, StackTrace? stack);

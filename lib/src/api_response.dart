@@ -6,12 +6,12 @@ class ApiResponse<T> {
   final int statusCode;
 
   /// Response data transformed into a strongly typed object
-  final T data;
+  final T? data;
 
   /// Only populated when the request fails for some reason. This value will
   /// contain an error response from the server or exception information if
   /// the request failed before getting a response.
-  final String error;
+  final String? error;
 
   /// If the request was successful
   bool get isSuccess => isSuccessStatusCode(statusCode);
