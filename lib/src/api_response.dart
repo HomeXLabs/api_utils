@@ -19,10 +19,11 @@ class ApiResponse<T> {
     if (isSuccessStatusCode(statusCode) && data != null) {
       return SuccessApiResponse<T>(statusCode: statusCode, data: data);
     }
-    return ErrorApiResponse<T>(statusCode: statusCode, error: error);
+    return FailureApiResponse<T>(statusCode: statusCode, error: error);
   }
 }
 
+/// Successful response from a web api, with a typed [data] field
 class SuccessApiResponse<T> implements ApiResponse<T> {
   /// Http status code returned from the server
   final int statusCode;
@@ -41,7 +42,8 @@ class SuccessApiResponse<T> implements ApiResponse<T> {
   SuccessApiResponse({required this.statusCode, required this.data});
 }
 
-class ErrorApiResponse<T> implements ApiResponse<T> {
+/// Unsuccessful response from a web api, with a typed [data] field
+class FailureApiResponse<T> implements ApiResponse<T> {
   /// Http status code returned from the server
   final int statusCode;
 
@@ -53,5 +55,5 @@ class ErrorApiResponse<T> implements ApiResponse<T> {
   /// If the request was successful
   bool get isSuccess => isSuccessStatusCode(statusCode);
 
-  ErrorApiResponse({required this.statusCode, required this.error});
+  FailureApiResponse({required this.statusCode, required this.error});
 }
