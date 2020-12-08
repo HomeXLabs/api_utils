@@ -15,7 +15,9 @@ void setHttpClientForTesting(http.Client client) {
 
 http.Client _client = http.Client();
 
-const Map<String, String> defaultHeaders = {'Content-Type': 'application/json'};
+const Map<String, String> _defaultHeaders = {
+  'Content-Type': 'application/json'
+};
 
 typedef FromJson<T> = T Function(Map<String, dynamic>);
 
@@ -24,7 +26,7 @@ Future<ApiResponse<T>> get<T>(
     {required String url,
     required FromJson<T> fromJson,
     bool useFromJsonOnFailure = false,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response = await _client.get(url, headers: headers);
     return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
@@ -36,7 +38,8 @@ Future<ApiResponse<T>> get<T>(
 
 /// Make a GET request with a byte array response
 Future<ApiResponse<Uint8List>> getByteArray(
-    {required String url, Map<String, String> headers = defaultHeaders}) async {
+    {required String url,
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response = await _client.get(url, headers: headers);
     return _handleByteArrayResult('GET', url, response);
@@ -50,7 +53,7 @@ Future<ApiResponse<Uint8List>> getByteArray(
 Future<ApiResponse<List<T>>> getList<T>(
     {required String url,
     required FromJson<T> fromJson,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response = await _client.get(url, headers: headers);
     return _handleListResult('GET', url, response, fromJson);
@@ -67,7 +70,7 @@ Future<ApiResponse<T>> post<T>(
     required Map<String, dynamic> body,
     FromJson<T>? fromJson,
     bool useFromJsonOnFailure = false,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response =
         await _client.post(url, headers: headers, body: jsonEncode(body));
@@ -85,7 +88,7 @@ Future<ApiResponse<T>> postAsString<T>(
     required String body,
     FromJson<T>? fromJson,
     bool useFromJsonOnFailure = false,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response = await _client.post(url, headers: headers, body: body);
     return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
@@ -101,7 +104,7 @@ Future<ApiResponse<List<T>>> postAndGetList<T>(
     {required String url,
     required Map<String, dynamic> body,
     required FromJson<T> fromJson,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response =
         await _client.post(url, headers: headers, body: jsonEncode(body));
@@ -119,7 +122,7 @@ Future<ApiResponse<T>> put<T>(
     required Map<String, dynamic> body,
     FromJson<T>? fromJson,
     bool useFromJsonOnFailure = false,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response =
         await _client.put(url, headers: headers, body: jsonEncode(body));
@@ -137,7 +140,7 @@ Future<ApiResponse<T>> putList<T>(
     required List body,
     FromJson<T>? fromJson,
     bool useFromJsonOnFailure = false,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response =
         await _client.put(url, headers: headers, body: jsonEncode(body));
@@ -150,7 +153,8 @@ Future<ApiResponse<T>> putList<T>(
 
 /// Make a DELETE request
 Future<ApiResponse<T>> delete<T>(
-    {required String url, Map<String, String> headers = defaultHeaders}) async {
+    {required String url,
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response = await _client.delete(url, headers: headers);
     return _handleResult('DELETE', url, response, null, false);
@@ -167,7 +171,7 @@ Future<ApiResponse<T>> patch<T>(
     required Map<String, dynamic> body,
     FromJson<T>? fromJson,
     bool useFromJsonOnFailure = false,
-    Map<String, String> headers = defaultHeaders}) async {
+    Map<String, String> headers = _defaultHeaders}) async {
   try {
     var response =
         await _client.patch(url, headers: headers, body: jsonEncode(body));
