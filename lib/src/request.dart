@@ -226,8 +226,8 @@ ApiResponse<List<T>> _handleListResult<T>(
   T Function(Map<String, dynamic>) fromJson,
 ) {
   if (isSuccessStatusCode(response.statusCode)) {
-    var list = json.decode(response.body) as Iterable;
-    var data = list.map((x) => fromJson(x as Map<String, dynamic>)).toList();
+    final list = json.decode(response.body) as Iterable;
+    final data = list.map((x) => fromJson(x as Map<String, dynamic>)).toList();
     return ApiResponse<List<T>>(response.statusCode, data: data);
   } else {
     _onError(method, url, response.statusCode, response.body);
