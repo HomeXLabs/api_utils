@@ -35,8 +35,7 @@ void main() {
   test('getList', () async {
     var response = await getList(
         url: 'https://jsonplaceholder.typicode.com/posts',
-        fromJson: (x) => Post.fromJson(x),
-        headers: {});
+        fromJson: (x) => Post.fromJson(x));
 
     expect(response.statusCode, 200);
     expect(response.isSuccess, true);
@@ -51,8 +50,7 @@ void main() {
 
     var response = await getList(
         url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
-        fromJson: (x) => Post.fromJson(x),
-        headers: {});
+        fromJson: (x) => Post.fromJson(x));
 
     expect(response.statusCode, 404);
     expect(response.isSuccess, false);
@@ -64,8 +62,7 @@ void main() {
     var newPost = Post(title: 'title', body: 'body');
     var response = await post(
         url: 'https://jsonplaceholder.typicode.com/posts',
-        body: newPost.toJson(),
-        headers: {});
+        body: newPost.toJson());
 
     expect(response.statusCode, 201);
     expect(response.isSuccess, true);
