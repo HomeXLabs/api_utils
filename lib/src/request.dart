@@ -186,20 +186,15 @@ ApiResponse<T> _handleResult<T>(
   T Function(Map<String, dynamic>)? fromJson,
   bool useFromJsonOnFailure,
 ) {
-  final body = jsonDecode(response.body);
   T? data;
-  if (!(body is Map<String, dynamic>)) {
-    _onError(method, url, response.statusCode, response.body);
-    return ApiResponse(response.statusCode, error: response.body);
-  }
   if (isSuccessStatusCode(response.statusCode)) {
     if (fromJson != null) {
-      data = fromJson(body);
+      data = fromJson(jsonDecode(response.body) as Map<String, dynamic>);
     }
     return ApiResponse<T>(response.statusCode, data: data);
   } else {
     if (fromJson != null && useFromJsonOnFailure) {
-      data = fromJson(body);
+      data = fromJson(jsonDecode(response.body) as Map<String, dynamic>);
     }
     _onError(method, url, response.statusCode, response.body);
     return ApiResponse(response.statusCode, data: data, error: response.body);
