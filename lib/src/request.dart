@@ -207,10 +207,12 @@ ApiResponse<Uint8List> _handleByteArrayResult(
   http.Response response,
 ) {
   if (isSuccessStatusCode(response.statusCode)) {
-    return ApiResponse<Uint8List>(response.statusCode, data: response.bodyBytes);
+    return ApiResponse<Uint8List>(response.statusCode,
+        data: response.bodyBytes);
   } else {
     _onError(method, url, response.statusCode, response.body);
-    return ApiResponse(response.statusCode, data: response.bodyBytes, error: response.body);
+    return ApiResponse(response.statusCode,
+        data: response.bodyBytes, error: response.body);
   }
 }
 
