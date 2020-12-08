@@ -10,7 +10,6 @@ import 'package:api_utils/src/api_response.dart';
 
 @visibleForTesting
 void setHttpClientForTesting(http.Client client) {
-  assert(client != null);
   _client = client;
 }
 
