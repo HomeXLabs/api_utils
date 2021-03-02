@@ -27,15 +27,14 @@ Future<ApiResponse<T>> get<T>({
   Duration timeout,
 }) async {
   try {
-    var requestFuture = _client.get(url, headers: headers);
-
     http.Response response;
     if (timeout != null) {
-      response = await requestFuture.timeout(timeout, onTimeout: () {
+      response = await _client.get(url, headers: headers).timeout(timeout,
+          onTimeout: () {
         throw ApiTimeoutException();
       });
     } else {
-      response = await requestFuture;
+      response = await _client.get(url, headers: headers);
     }
 
     return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
