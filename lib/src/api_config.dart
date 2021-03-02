@@ -1,4 +1,4 @@
-/// Add logging to your api calls in one place
+/// Configure Api Utils behavior
 class ApiUtilsConfig {
   ApiUtilsConfig._();
 
