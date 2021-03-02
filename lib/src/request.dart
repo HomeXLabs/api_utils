@@ -29,20 +29,29 @@ Future<ApiResponse<T>> get<T>({
   try {
     var requestFuture = _client.get(url, headers: headers);
 
-    http.Response response;
-    if (timeout != null) {
-      response = await requestFuture.timeout(timeout, onTimeout: () {
-        throw ApiTimeoutException();
-      });
-    } else {
-      response = await requestFuture;
-    }
+    http.Response response =
+        await makeRequestWithOptionalTimeout(requestFuture, timeout);
 
     return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
     return ApiResponse(-1, error: e.toString());
   }
+}
+
+Future<http.Response> makeRequestWithOptionalTimeout(
+  Future<http.Response> requestFuture,
+  Duration timeout,
+) async {
+  http.Response response;
+  if (timeout != null) {
+    response = await requestFuture.timeout(timeout, onTimeout: () {
+      throw ApiTimeoutException();
+    });
+  } else {
+    response = await requestFuture;
+  }
+  return response;
 }
 
 /// Make a GET request with a byte array response
@@ -58,12 +67,18 @@ Future<ApiResponse<Uint8List>> getByteArray(
 }
 
 /// Make a GET request with an json list response
-Future<ApiResponse<List<T>>> getList<T>(
-    {@required String url,
-    @required FromJson<T> fromJson,
-    Map<String, String> headers}) async {
+Future<ApiResponse<List<T>>> getList<T>({
+  @required String url,
+  @required FromJson<T> fromJson,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response = await _client.get(url, headers: headers);
+    var requestFuture = _client.get(url, headers: headers);
+
+    http.Response response =
+        await makeRequestWithOptionalTimeout(requestFuture, timeout);
+
     return _handleListResult('GET', url, response, fromJson);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
