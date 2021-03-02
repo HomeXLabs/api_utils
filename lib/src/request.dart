@@ -28,10 +28,7 @@ Future<ApiResponse<T>> get<T>({
 }) async {
   try {
     var requestFuture = _client.get(url, headers: headers);
-
-    http.Response response =
-        await makeRequestWithOptionalTimeout(requestFuture, timeout);
-
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
@@ -39,26 +36,15 @@ Future<ApiResponse<T>> get<T>({
   }
 }
 
-Future<http.Response> makeRequestWithOptionalTimeout(
-  Future<http.Response> requestFuture,
-  Duration timeout,
-) async {
-  http.Response response;
-  if (timeout != null) {
-    response = await requestFuture.timeout(timeout, onTimeout: () {
-      throw ApiTimeoutException();
-    });
-  } else {
-    response = await requestFuture;
-  }
-  return response;
-}
-
 /// Make a GET request with a byte array response
-Future<ApiResponse<Uint8List>> getByteArray(
-    {@required String url, Map<String, String> headers}) async {
+Future<ApiResponse<Uint8List>> getByteArray({
+  @required String url,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response = await _client.get(url, headers: headers);
+    var requestFuture = _client.get(url, headers: headers);
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleByteArrayResult('GET', url, response);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
@@ -75,10 +61,7 @@ Future<ApiResponse<List<T>>> getList<T>({
 }) async {
   try {
     var requestFuture = _client.get(url, headers: headers);
-
-    http.Response response =
-        await makeRequestWithOptionalTimeout(requestFuture, timeout);
-
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleListResult('GET', url, response, fromJson);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
@@ -88,15 +71,18 @@ Future<ApiResponse<List<T>>> getList<T>({
 
 /// Make a POST request sending a json object, with an optional json object
 /// response
-Future<ApiResponse<T>> post<T>(
-    {@required String url,
-    @required Map<String, dynamic> body,
-    FromJson<T> fromJson,
-    bool useFromJsonOnFailure = false,
-    Map<String, String> headers}) async {
+Future<ApiResponse<T>> post<T>({
+  @required String url,
+  @required Map<String, dynamic> body,
+  FromJson<T> fromJson,
+  bool useFromJsonOnFailure = false,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response =
-        await _client.post(url, headers: headers, body: jsonEncode(body));
+    var requestFuture =
+        _client.post(url, headers: headers, body: jsonEncode(body));
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('POST', url, -1, e, stack);
@@ -106,14 +92,17 @@ Future<ApiResponse<T>> post<T>(
 
 /// Make a POST request sending a raw string, with an optional json object
 /// response
-Future<ApiResponse<T>> postAsString<T>(
-    {@required String url,
-    @required String body,
-    FromJson<T> fromJson,
-    bool useFromJsonOnFailure = false,
-    Map<String, String> headers}) async {
+Future<ApiResponse<T>> postAsString<T>({
+  @required String url,
+  @required String body,
+  FromJson<T> fromJson,
+  bool useFromJsonOnFailure = false,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response = await _client.post(url, headers: headers, body: body);
+    var requestFuture = _client.post(url, headers: headers, body: body);
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleResult('POST', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('POST', url, -1, e, stack);
@@ -123,14 +112,17 @@ Future<ApiResponse<T>> postAsString<T>(
 
 /// Make a POST request sending a json object, with an optional json list
 /// response
-Future<ApiResponse<List<T>>> postAndGetList<T>(
-    {@required String url,
-    @required Map<String, dynamic> body,
-    @required FromJson<T> fromJson,
-    Map<String, String> headers}) async {
+Future<ApiResponse<List<T>>> postAndGetList<T>({
+  @required String url,
+  @required Map<String, dynamic> body,
+  @required FromJson<T> fromJson,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response =
-        await _client.post(url, headers: headers, body: jsonEncode(body));
+    var requestFuture =
+        _client.post(url, headers: headers, body: jsonEncode(body));
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleListResult('POST', url, response, fromJson);
   } catch (e, stack) {
     _onException('POST', url, -1, e, stack);
@@ -140,15 +132,18 @@ Future<ApiResponse<List<T>>> postAndGetList<T>(
 
 /// Make a PUT request sending a json object, with an optional json object
 /// response
-Future<ApiResponse<T>> put<T>(
-    {@required String url,
-    @required Map<String, dynamic> body,
-    FromJson<T> fromJson,
-    bool useFromJsonOnFailure = false,
-    Map<String, String> headers}) async {
+Future<ApiResponse<T>> put<T>({
+  @required String url,
+  @required Map<String, dynamic> body,
+  FromJson<T> fromJson,
+  bool useFromJsonOnFailure = false,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response =
-        await _client.put(url, headers: headers, body: jsonEncode(body));
+    var requestFuture =
+        _client.put(url, headers: headers, body: jsonEncode(body));
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('PUT', url, -1, e, stack);
@@ -158,15 +153,18 @@ Future<ApiResponse<T>> put<T>(
 
 /// Make a PUT request sending a json list, with an optional json object
 /// response
-Future<ApiResponse<T>> putList<T>(
-    {@required String url,
-    @required List body,
-    FromJson<T> fromJson,
-    bool useFromJsonOnFailure = false,
-    Map<String, String> headers}) async {
+Future<ApiResponse<T>> putList<T>({
+  @required String url,
+  @required List body,
+  FromJson<T> fromJson,
+  bool useFromJsonOnFailure = false,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response =
-        await _client.put(url, headers: headers, body: jsonEncode(body));
+    var requestFuture =
+        _client.put(url, headers: headers, body: jsonEncode(body));
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleResult('PUT', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('PUT', url, -1, e, stack);
@@ -175,10 +173,14 @@ Future<ApiResponse<T>> putList<T>(
 }
 
 /// Make a DELETE request
-Future<ApiResponse<T>> delete<T>(
-    {@required String url, Map<String, String> headers}) async {
+Future<ApiResponse<T>> delete<T>({
+  @required String url,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response = await _client.delete(url, headers: headers);
+    var requestFuture = _client.delete(url, headers: headers);
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleResult('DELETE', url, response, null, false);
   } catch (e, stack) {
     _onException('DELETE', url, -1, e, stack);
@@ -188,15 +190,18 @@ Future<ApiResponse<T>> delete<T>(
 
 /// Make a PATCH request sending a json object, with an optional json object
 /// response
-Future<ApiResponse<T>> patch<T>(
-    {@required String url,
-    @required Map<String, dynamic> body,
-    FromJson<T> fromJson,
-    bool useFromJsonOnFailure = false,
-    Map<String, String> headers}) async {
+Future<ApiResponse<T>> patch<T>({
+  @required String url,
+  @required Map<String, dynamic> body,
+  FromJson<T> fromJson,
+  bool useFromJsonOnFailure = false,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response =
-        await _client.patch(url, headers: headers, body: jsonEncode(body));
+    var requestFuture =
+        _client.patch(url, headers: headers, body: jsonEncode(body));
+    var response = await _makeRequest(requestFuture, timeout);
     return _handleResult(
         'PATCH', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
@@ -256,6 +261,21 @@ ApiResponse<List<T>> _handleListResult<T>(
     _onError(method, url, response.statusCode, response.body);
     return ApiResponse(response.statusCode, error: response.body);
   }
+}
+
+Future<http.Response> _makeRequest(
+  Future<http.Response> requestFuture,
+  Duration timeout,
+) async {
+  http.Response response;
+  if (timeout != null) {
+    response = await requestFuture.timeout(timeout, onTimeout: () {
+      throw ApiTimeoutException();
+    });
+  } else {
+    response = await requestFuture;
+  }
+  return response;
 }
 
 void _onException(
