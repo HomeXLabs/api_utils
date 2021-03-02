@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'dart:convert';
 
-import 'package:api_utils/src/timeout.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
-import 'package:api_utils/src/api_logger.dart';
+import 'package:api_utils/src/api_config.dart';
+import 'package:api_utils/src/timeout.dart';
 import 'package:api_utils/src/status_code.dart';
 import 'package:api_utils/src/api_response.dart';
 
@@ -268,10 +268,16 @@ Future<http.Response> _makeRequest(
   Duration timeout,
 ) async {
   http.Response response;
-  if (timeout != null) {
-    response = await requestFuture.timeout(timeout, onTimeout: () {
-      throw ApiTimeoutException();
-    });
+  // if a per request timeout or global timeout is set, timeout the future when
+  // it is created.
+  if (timeout != null || ApiUtilsConfig.timeout != null) {
+    // Prefer per request timeout over the global timeout
+    response = await requestFuture.timeout(
+      timeout ?? ApiUtilsConfig.timeout,
+      onTimeout: () {
+        throw ApiTimeoutException();
+      },
+    );
   } else {
     response = await requestFuture;
   }
@@ -286,7 +292,7 @@ void _onException(
   StackTrace stack,
 ]) {
   var message = 'Api Error: $statusCode $method $url Error: ${e.toString()}';
-  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, e, stack)});
+  ApiUtilsConfig.onErrorMiddleware?.forEach((x) => {x(message, e, stack)});
 }
 
 void _onError(
@@ -296,5 +302,5 @@ void _onError(
   String error,
 ) {
   var message = 'Api Error: $statusCode $method $url Error: $error';
-  ApiLogger.onErrorMiddleware?.forEach((x) => {x(message, null, null)});
+  ApiUtilsConfig.onErrorMiddleware?.forEach((x) => {x(message, null, null)});
 }
