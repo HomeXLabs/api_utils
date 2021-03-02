@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'package:api_utils/src/timeout.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:api_utils/src/api_logger.dart';
@@ -18,13 +19,23 @@ http.Client _client = http.Client();
 typedef FromJson<T> = T Function(Map<String, dynamic>);
 
 /// Make a GET request with a json object response
-Future<ApiResponse<T>> get<T>(
-    {@required String url,
-    @required FromJson<T> fromJson,
-    bool useFromJsonOnFailure = false,
-    Map<String, String> headers}) async {
+Future<ApiResponse<T>> get<T>({
+  @required String url,
+  @required FromJson<T> fromJson,
+  bool useFromJsonOnFailure = false,
+  Map<String, String> headers,
+  Duration timeout,
+}) async {
   try {
-    var response = await _client.get(url, headers: headers);
+    var requestFuture = _client.get(url, headers: headers);
+
+    if (timeout != null) {
+      requestFuture.timeout(timeout, onTimeout: () {
+        throw ApiTimeoutException();
+      });
+    }
+
+    var response = await requestFuture;
     return _handleResult('GET', url, response, fromJson, useFromJsonOnFailure);
   } catch (e, stack) {
     _onException('GET', url, -1, e, stack);
