@@ -263,17 +263,19 @@ ApiResponse<List<T>> _handleListResult<T>(
   }
 }
 
+// if a per request timeout or global timeout is set, timeout the future when
+// it is created.
 Future<http.Response> _makeRequest(
   Future<http.Response> requestFuture,
   Duration timeout,
 ) async {
   http.Response response;
-  // if a per request timeout or global timeout is set, timeout the future when
-  // it is created.
-  if (timeout != null || ApiUtilsConfig.timeout != null) {
-    // Prefer per request timeout over the global timeout
+
+  // Prefer per request timeout over the global timeout
+  var _timeout = timeout ?? ApiUtilsConfig.timeout;
+  if (_timeout != null) {
     response = await requestFuture.timeout(
-      timeout ?? ApiUtilsConfig.timeout,
+      _timeout,
       onTimeout: () {
         throw ApiTimeoutException();
       },
