@@ -44,7 +44,7 @@ void main() {
 
   test('ApiLogger logs', () async {
     String errorMsg;
-    ApiLogger.onErrorMiddleware.add((message, e, stack) {
+    ApiUtilsConfig.onErrorMiddleware.add((message, e, stack) {
       errorMsg = message;
     });
 
