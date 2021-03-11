@@ -1,6 +1,8 @@
-## [2.0.0-nullsafety.0]
+## [2.0.0]
 
-* Migrate to null safety
+* Breaking change: ApiLogger renamed to ApiUtilsConfig
+* Added the ability to set a global timeout for all requests on ApiUtilsConfig
+* Added the ability to set a timeout per request. This will override the global setting if set.
 
 ## [1.0.0]
 
