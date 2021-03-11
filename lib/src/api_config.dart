@@ -8,7 +8,7 @@ class ApiUtilsConfig {
 
   /// A global timeout for all requests. This can be overridden per request.
   /// Default behavior is no timeout.
-  static Duration timeout;
+  static Duration? timeout;
 }
 
 typedef OnError = Function(String message, Exception? e, StackTrace? stack);
