@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:api_utils/api_utils.dart';
@@ -25,7 +24,7 @@ void main() {
           'https://jsonplaceholder.typicode.com/posts-bad-url') {
         return http.Response('', 404);
       } else {
-        return null;
+        throw Exception('Unknown mocked http request');
       }
     }));
   });
@@ -41,7 +40,7 @@ void main() {
   });
 
   test('ApiLogger logs', () async {
-    String errorMsg;
+    String errorMsg = '';
     ApiUtilsConfig.onErrorMiddleware.add((message, e, stack) {
       errorMsg = message;
     });
@@ -53,7 +52,7 @@ void main() {
     expect(response.statusCode, 404);
     expect(response.isSuccess, false);
     expect(response.data == null, true);
-    expect(errorMsg != null, true);
+    expect(errorMsg.isNotEmpty, true);
   });
 
   test('post', () async {
@@ -69,27 +68,19 @@ void main() {
 
 class Post {
   Post({
-    this.userId,
-    this.id,
-    this.title,
-    this.body,
+    required this.title,
+    required this.body,
   });
 
-  final int userId;
-  final int id;
   final String title;
   final String body;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-        userId: json["userId"],
-        id: json["id"],
         title: json["title"],
         body: json["body"],
       );
 
   Map<String, dynamic> toJson() => {
-        "userId": userId,
-        "id": id,
         "title": title,
         "body": body,
       };
