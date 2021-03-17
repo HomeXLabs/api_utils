@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:api_utils/api_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -26,16 +24,15 @@ void main() {
           'https://jsonplaceholder.typicode.com/posts-bad-url') {
         return http.Response('', 404);
       } else {
-        return null;
+        throw Exception('Unknown mocked http request');
       }
     }));
   });
 
   test('getList', () async {
     var response = await getList(
-      url: 'https://jsonplaceholder.typicode.com/posts',
-      fromJson: (x) => Post.fromJson(x),
-    );
+        url: 'https://jsonplaceholder.typicode.com/posts',
+        fromJson: (x) => Post.fromJson(x));
 
     expect(response.statusCode, 200);
     expect(response.isSuccess, true);
@@ -43,28 +40,26 @@ void main() {
   });
 
   test('ApiLogger logs', () async {
-    String errorMsg;
+    String errorMsg = '';
     ApiUtilsConfig.onErrorMiddleware.add((message, e, stack) {
       errorMsg = message;
     });
 
     var response = await getList(
-      url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
-      fromJson: (x) => Post.fromJson(x),
-    );
+        url: 'https://jsonplaceholder.typicode.com/posts-bad-url',
+        fromJson: (x) => Post.fromJson(x));
 
     expect(response.statusCode, 404);
     expect(response.isSuccess, false);
     expect(response.data == null, true);
-    expect(errorMsg != null, true);
+    expect(errorMsg.isNotEmpty, true);
   });
 
   test('post', () async {
     var newPost = Post(title: 'title', body: 'body');
     var response = await post(
-      url: 'https://jsonplaceholder.typicode.com/posts',
-      body: newPost.toJson(),
-    );
+        url: 'https://jsonplaceholder.typicode.com/posts',
+        body: newPost.toJson());
 
     expect(response.statusCode, 201);
     expect(response.isSuccess, true);
@@ -73,27 +68,19 @@ void main() {
 
 class Post {
   Post({
-    this.userId,
-    this.id,
-    this.title,
-    this.body,
+    required this.title,
+    required this.body,
   });
 
-  final int userId;
-  final int id;
   final String title;
   final String body;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-        userId: json["userId"],
-        id: json["id"],
         title: json["title"],
         body: json["body"],
       );
 
   Map<String, dynamic> toJson() => {
-        "userId": userId,
-        "id": id,
         "title": title,
         "body": body,
       };

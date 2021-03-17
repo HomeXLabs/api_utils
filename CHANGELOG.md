@@ -1,3 +1,7 @@
+## [3.0.0]
+
+* Null safety migration
+
 ## [2.0.0]
 
 * Breaking change: ApiLogger renamed to ApiUtilsConfig
