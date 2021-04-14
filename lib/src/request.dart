@@ -7,15 +7,14 @@ import 'package:api_utils/src/status_code.dart';
 import 'package:api_utils/src/timeout.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 @visibleForTesting
 void setHttpClientForTesting(http.Client client) {
   _client = client;
 }
 
-void setSentryHttpClient({SentryHttpClient? client}) {
-  _client = client ?? SentryHttpClient(client: http.Client());
+void setHttpClient(http.Client client) {
+  _client = client;
 }
 
 http.Client _client = http.Client();
