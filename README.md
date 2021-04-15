@@ -35,3 +35,10 @@ ApiLogger.onErrorMiddleware.add((message, exception, stack) {
     }
 });
 ```
+
+## Publish / Release New Version
+* Update the `CHANGELOG.md` to add a description of the change.
+* Update the version number in `pubspec.yaml`.
+* Create a new Release in:
+https://github.com/HomeXLabs/api_utils/releases
+
