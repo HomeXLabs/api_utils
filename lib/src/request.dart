@@ -6,12 +6,6 @@ import 'package:api_utils/src/api_response.dart';
 import 'package:api_utils/src/status_code.dart';
 import 'package:api_utils/src/timeout.dart';
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
-
-@visibleForTesting
-void setHttpClientForTesting(http.Client client) {
-  _client = client;
-}
 
 void setHttpClient(http.Client client) {
   _client = client;

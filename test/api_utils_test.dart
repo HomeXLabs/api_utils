@@ -1,12 +1,13 @@
 import 'dart:convert';
-import 'package:flutter_test/flutter_test.dart';
+
 import 'package:api_utils/api_utils.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 void main() {
   setUpAll(() {
-    setHttpClientForTesting(MockClient((request) async {
+    setHttpClient(MockClient((request) async {
       if (request.url.toString() ==
               'https://jsonplaceholder.typicode.com/posts' &&
           request.method == 'GET') {
