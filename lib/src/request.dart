@@ -1,15 +1,13 @@
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 import 'package:api_utils/src/api_config.dart';
-import 'package:api_utils/src/timeout.dart';
-import 'package:api_utils/src/status_code.dart';
 import 'package:api_utils/src/api_response.dart';
+import 'package:api_utils/src/status_code.dart';
+import 'package:api_utils/src/timeout.dart';
+import 'package:http/http.dart' as http;
 
-@visibleForTesting
-void setHttpClientForTesting(http.Client client) {
+void setHttpClient(http.Client client) {
   _client = client;
 }
 
