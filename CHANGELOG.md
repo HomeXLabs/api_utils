@@ -1,3 +1,7 @@
+## [3.1.0]
+
+* Added the ability to set the underlying http client
+
 ## [3.0.0]
 
 * Null safety migration

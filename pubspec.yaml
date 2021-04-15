@@ -1,6 +1,6 @@
 name: api_utils
 description: Convenient api utilities to make working with REST APIs easier
-version: 3.0.0
+version: 3.1.0
 homepage: https://github.com/HomeXLabs/api_utils
 repository: https://github.com/HomeXLabs/api_utils
 
