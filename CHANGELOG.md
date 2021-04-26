@@ -1,3 +1,9 @@
+## [4.0.0]
+* Breaking change: `headers` parameter changed from `Map<String, String>` to 
+`Future<Map<String, String>> Function()` as users commonly need to asynchronously set headers like 
+Authorization. Exceptions thrown during this function are caught and an appropriate ApiResponse is 
+returned.
+
 ## [3.1.0]
 
 * Added the ability to set the underlying http client
