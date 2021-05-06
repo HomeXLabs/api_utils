@@ -40,6 +40,17 @@ void main() {
     expect(response.data != null, true);
   });
 
+  test('headers exception captured', () async {
+    var response = await getList(
+        url: 'https://jsonplaceholder.typicode.com/posts',
+        headers: () => throw Exception('test'),
+        fromJson: (x) => Post.fromJson(x));
+
+    expect(response.statusCode, -1);
+    expect(response.isSuccess, false);
+    expect(response.error, 'Exception: test');
+  });
+
   test('ApiLogger logs', () async {
     String errorMsg = '';
     ApiUtilsConfig.onErrorMiddleware.add((message, e, stack) {
